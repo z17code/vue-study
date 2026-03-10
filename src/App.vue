@@ -31,7 +31,7 @@
       <tfoot>
         <tr>
           <td colspan="3" class="total-label">总计</td>
-          <td colspan="2" class="total-value">¥...</td>
+          <td colspan="2" class="total-value">¥</td>
         </tr>
       </tfoot>
     </table>
