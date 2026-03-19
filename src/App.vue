@@ -1,8 +1,5 @@
-
-```vue
 <template>
   <div class="shopping-cart">
-    <!-- TODO1：此处在界面上应该展示出你的名字，请在模型中声明响应式状态 -->
     <h2>{{ userName }}的购物车</h2>
     <table>
       <thead>
@@ -14,24 +11,21 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>{{ cartItem.name }}</td>
-          <td>¥{{ cartItem.price.toFixed(2) }}</td>
+        <tr v-for="(item, index) in cartItems" :key="item.id">
+          <td>{{ item.name }}</td>
+          <td>¥{{ item.price.toFixed(2) }}</td>
           <td>
-            <!-- TODO2：请补充减按钮的点击事件监听，要求声明方法实现 -->
-            <button @click="decreaseCount">-</button>
-            <!-- TODO3：此处在界面上应该展示出商品数量，请在模型中声明响应式状态，要求初始值为1 -->
-            {{ itemCount }}
-            <button @click="increaseCount">+</button>
+            <button @click="decreaseCount(index)">-</button>
+            {{ item.count }}
+            <button @click="increaseCount(index)">+</button>
           </td>
-          <!-- TODO4：请使用JavaScript表达式实现计算商品小计总价 -->
-          <td>¥{{ total }}</td>
+          <td>¥{{ (item.price * item.count).toFixed(2) }}</td>
         </tr>
       </tbody>
       <tfoot>
         <tr>
           <td colspan="3" class="total-label">总计</td>
-          <td colspan="2" class="total-value">¥</td>
+          <td colspan="2" class="total-value">¥{{ totalPrice.toFixed(2) }}</td>
         </tr>
       </tfoot>
     </table>
@@ -39,29 +33,30 @@
 </template>
 
 <script setup>
-// TODO5：请补充import语句
-import { ref } from 'vue';
-// TODO6：请补充相关响应式状态声明，关联TODO1和TODO3
-const itemCount = ref(1);
-const userName = ref('张三');
-const total = ref(0.0);
-const cartItem = ref(
-  { id: 1, name: '商品 A', price: 29.99 }
-);
+import { ref, computed } from 'vue'
 
-total.value = cartItem.value.price * itemCount.value;
-const increaseCount = () => {
-  itemCount.value++;
-  total.value = cartItem.value.price * itemCount.value;
-};
+const userName = ref('苏尚海')
 
-// TODO7 请定义并实现decreaseCount方法，注意数量不可小于0. 关联TODO2
-function decreaseCount() {
-  if (itemCount.value > 0) {
-    itemCount.value--;
-  }
-  total.value = cartItem.value.price * itemCount.value;
+const cartItems = ref([
+  { id: 1, name: '商品 A', price: 29.99, count: 1 },
+  { id: 2, name: '商品 B', price: 9.88, count: 1 },
+])
+
+const increaseCount = (index) => {
+  cartItems.value[index].count++
 }
+
+const decreaseCount = (index) => {
+  if (cartItems.value[index].count > 1) {
+    cartItems.value[index].count--
+  } else {
+    alert('本次练习中，数量不可小于0')
+  }
+}
+
+const totalPrice = computed(() => {
+  return cartItems.value.reduce((total, item) => total + item.price * item.count, 0)
+})
 </script>
 
 <style scoped>
@@ -108,5 +103,26 @@ td button {
 td button:hover {
   background-color: #e0e0e0;
 }
+
+tfoot td {
+  font-weight: bold;
+  border-top: 2px solid #333;
+  border-bottom: none;
+}
+
+.total-label {
+  text-align: right;
+}
+
+.total-value {
+  text-align: left;
+  color: #e44d26;
+}
+
+.empty-cart {
+  text-align: center;
+  color: #999;
+  font-size: 1.2em;
+  margin-top: 40px;
+}
 </style>
-```
